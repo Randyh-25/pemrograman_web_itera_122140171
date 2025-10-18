@@ -4,6 +4,8 @@
 **Institusi:** Institut Teknologi Sumatera  
 **Mata Kuliah:** Pemrograman Web
 
+[![Lihat Daftar Tugas Selesai](https://img.shields.io/badge/Lihat%20Daftar%20Tugas%20Selesai-4CAF50?style=for-the-badge&logo=github&logoColor=white)](https://randyh-25.github.io/pemrograman_web_itera_122140171/)
+
 ## 📁 Struktur Repository
 
 ```
@@ -16,7 +18,7 @@ pemrograman_web_itera_122140171/
     └── script.js                                # Logic aplikasi
 ```
 
-## 🎯 Daftar Tugas
+## Daftar Tugas
 
 ### Pertemuan 1 - Aplikasi Manajemen Tugas Mahasiswa
 - **Folder:** `RandyHendriyawan_122140171_pertemuan1/`
@@ -29,27 +31,6 @@ pemrograman_web_itera_122140171/
   - Responsive Design
   - Statistik dashboard
   - Notifikasi user-friendly
-
-##  Cara Menggunakan
-
-### Metode 1: Langsung dari File
-1. Buka file `index.html` di root directory
-2. Klik "Lihat Demo" pada tugas yang ingin dilihat
-3. Klik "Lihat Kode" untuk melihat source code
-
-### Metode 2: Local Server
-```bash
-# Menggunakan Python
-python -m http.server 8000
-
-# Menggunakan Node.js
-npx http-server
-
-# Menggunakan PHP
-php -S localhost:8000
-```
-
-Kemudian buka `http://localhost:8000`
 
 
 ---
