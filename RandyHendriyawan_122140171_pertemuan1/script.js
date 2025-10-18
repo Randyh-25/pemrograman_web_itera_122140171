@@ -60,6 +60,33 @@ class TaskManager {
                 this.hideModal();
             }
         });
+
+        document.addEventListener('click', (e) => {
+            const button = e.target.closest('button[data-action]');
+            if (!button) return;
+
+            e.preventDefault();
+            e.stopPropagation();
+
+            const action = button.getAttribute('data-action');
+            const taskId = button.getAttribute('data-task-id');
+
+            console.log('Button clicked:', action, 'ID:', taskId);
+
+            switch (action) {
+                case 'toggle':
+                    this.toggleTaskStatus(taskId);
+                    break;
+                case 'edit':
+                    if (!button.disabled) {
+                        this.editTask(taskId);
+                    }
+                    break;
+                case 'delete':
+                    this.showDeleteConfirm(taskId);
+                    break;
+            }
+        });
     }
     validateForm() {
         const taskName = document.getElementById('taskName').value.trim();
@@ -199,7 +226,9 @@ class TaskManager {
     }
 
     toggleTaskStatus(id) {
+        console.log('toggleTaskStatus called with ID:', id);
         const task = this.tasks.find(task => task.id === id);
+        console.log('Task found:', task);
         if (task) {
             task.status = task.status === 'pending' ? 'completed' : 'pending';
             task.completedAt = task.status === 'completed' ? new Date().toISOString() : null;
@@ -207,11 +236,15 @@ class TaskManager {
             this.saveTasks();
             const message = task.status === 'completed' ? 'Tugas ditandai selesai!' : 'Tugas ditandai belum selesai!';
             this.showNotification(message, 'success');
+        } else {
+            console.log('Task not found with ID:', id);
         }
     }
 
     editTask(id) {
+        console.log('editTask called with ID:', id);
         const task = this.tasks.find(task => task.id === id);
+        console.log('Task found for edit:', task);
         if (task) {
             this.editingTaskId = id;
             
@@ -242,6 +275,10 @@ class TaskManager {
             const savedTasks = localStorage.getItem('tasks');
             if (savedTasks) {
                 this.tasks = JSON.parse(savedTasks);
+                console.log('Loaded tasks:', this.tasks);
+                this.tasks.forEach(task => {
+                    console.log('Task ID type:', typeof task.id, 'Value:', task.id);
+                });
             }
         } catch (error) {
             console.error('Error loading tasks:', error);
@@ -311,13 +348,13 @@ class TaskManager {
                     </div>
                 </div>
                 <div class="task-actions">
-                    <button class="btn-complete" onclick="taskManager.toggleTaskStatus(${task.id})">
+                    <button class="btn-complete" data-action="toggle" data-task-id="${task.id}">
                         <i class="${completeButtonIcon}"></i> ${completeButtonText}
                     </button>
-                    <button class="btn-edit" onclick="taskManager.editTask(${task.id})" ${task.status === 'completed' ? 'disabled' : ''}>
+                    <button class="btn-edit" data-action="edit" data-task-id="${task.id}" ${task.status === 'completed' ? 'disabled' : ''}>
                         <i class="fas fa-edit"></i> Edit
                     </button>
-                    <button class="btn-delete" onclick="taskManager.showDeleteConfirm(${task.id})">
+                    <button class="btn-delete" data-action="delete" data-task-id="${task.id}">
                         <i class="fas fa-trash"></i> Hapus
                     </button>
                 </div>
@@ -388,11 +425,15 @@ class TaskManager {
         document.getElementById('urgentTasks').textContent = urgentTasks;
     }
     showDeleteConfirm(id) {
+        console.log('showDeleteConfirm called with ID:', id);
         this.taskToDelete = id;
         const task = this.tasks.find(t => t.id === id);
-        document.getElementById('confirmMessage').textContent = 
-            `Apakah Anda yakin ingin menghapus tugas "${task.name}"?`;
-        document.getElementById('confirmModal').classList.add('show');
+        console.log('Task found for delete:', task);
+        if (task) {
+            document.getElementById('confirmMessage').textContent = 
+                `Apakah Anda yakin ingin menghapus tugas "${task.name}"?`;
+            document.getElementById('confirmModal').classList.add('show');
+        }
     }
 
     confirmDelete() {
@@ -407,7 +448,7 @@ class TaskManager {
         document.getElementById('confirmModal').classList.remove('show');
     }
     generateId() {
-        return Date.now() + Math.random().toString(36).substr(2, 9);
+        return Date.now().toString() + Math.floor(Math.random() * 1000).toString();
     }
 
     escapeHtml(unsafe) {
