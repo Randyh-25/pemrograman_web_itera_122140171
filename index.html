@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pemrograman Web - Randy Hendriyawan</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 50px;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+
+        .header .info {
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+
+        .assignments-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .assignment-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .assignment-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .assignment-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .assignment-number {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        .assignment-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 15px;
+        }
+
+        .assignment-description {
+            color: #4a5568;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+        }
+
+        .assignment-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            color: #718096;
+        }
+
+        .assignment-status {
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-completed {
+            background: #c6f6d5;
+            color: #276749;
+        }
+
+        .status-in-progress {
+            background: #feebc8;
+            color: #c05621;
+        }
+
+        .assignment-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #edf2f7;
+            color: #4a5568;
+            border: 1px solid #e2e8f0;
+        }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
+        }
+
+        .no-assignments {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .no-assignments i {
+            font-size: 4rem;
+            color: #a0aec0;
+            margin-bottom: 20px;
+        }
+
+        .no-assignments h3 {
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+
+        .no-assignments p {
+            color: #718096;
+        }
+
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .footer p {
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.2rem;
+            }
+
+            .assignments-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .assignment-card {
+                padding: 20px;
+            }
+
+            .assignment-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                justify-content: center;
+            }
+        }
+    </style>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1><i class="fas fa-code" aria-hidden="true"></i> Pemrograman Web</h1>
+            <p class="subtitle">Kumpulan Tugas dan Projek</p>
+            <p class="info">Randy Hendriyawan - 122140171 - Institut Teknologi Sumatera</p>
+        </header>
+
+        <main>
+            <div id="assignmentsContainer" class="assignments-grid">
+                <div class="no-assignments">
+                    <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
+                    <h3>Memuat Tugas...</h3>
+                    <p>Sedang mencari folder tugas yang tersedia</p>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>&copy; 2025 Randy Hendriyawan - Institut Teknologi Sumatera</p>
+        </footer>
+    </div>
+
+    <script>
+        class AssignmentPortfolio {
+            constructor() {
+                this.assignments = [];
+                this.isGitHubPages = window.location.hostname.includes('github.io');
+                this.baseUrl = this.isGitHubPages 
+                    ? 'https://randyh-25.github.io/pemrograman_web_itera_122140171'
+                    : '.';
+                this.init();
+            }
+
+            init() {
+                this.loadAssignments();
+            }
+
+            async loadAssignments() {
+                try {
+                    const assignments = [
+                        {
+                            number: 1,
+                            title: "Aplikasi Manajemen Tugas Mahasiswa",
+                            description: "Aplikasi web interaktif untuk mengelola tugas akademik dengan fitur CRUD, filter, pencarian, dan penyimpanan lokal menggunakan localStorage.",
+                            folder: "RandyHendriyawan_122140171_pertemuan1",
+                            status: "completed",
+                            technologies: ["HTML5", "CSS3", "Vanilla JavaScript", "LocalStorage"],
+                            features: ["CRUD Operations", "Form Validation", "Local Storage", "Responsive Design"],
+                            lastModified: "2025-10-18"
+                        }
+                    ];
+
+                    await this.checkFolderExists(assignments);
+                    this.displayAssignments(assignments);
+                } catch (error) {
+                    console.error('Error loading assignments:', error);
+                    this.showError();
+                }
+            }
+
+            async checkFolderExists(assignments) {
+                for (let assignment of assignments) {
+                    try {
+                        const checkUrl = this.isGitHubPages 
+                            ? `${this.baseUrl}/${assignment.folder}/`
+                            : `./${assignment.folder}/index.html`;
+                        const response = await fetch(checkUrl, { method: 'HEAD' });
+                        assignment.exists = response.ok;
+                    } catch (error) {
+                        // Fallback: assume exists if we can't check
+                        assignment.exists = true;
+                    }
+                }
+            }
+
+            displayAssignments(assignments) {
+                const container = document.getElementById('assignmentsContainer');
+                
+                if (assignments.length === 0 || !assignments.some(a => a.exists)) {
+                    container.innerHTML = `
+                        <div class="no-assignments">
+                            <i class="fas fa-folder-open" aria-hidden="true"></i>
+                            <h3>Belum Ada Tugas</h3>
+                            <p>Folder tugas belum ditemukan. Pastikan folder tugas sudah tersedia.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const existingAssignments = assignments.filter(a => a.exists);
+                
+                container.innerHTML = existingAssignments.map(assignment => 
+                    this.createAssignmentCard(assignment)
+                ).join('');
+            }
+
+            createAssignmentCard(assignment) {
+                const statusClass = assignment.status === 'completed' ? 'status-completed' : 'status-in-progress';
+                const statusText = assignment.status === 'completed' ? 'Selesai' : 'Dalam Proses';
+                
+                return `
+                    <article class="assignment-card">
+                        <div class="assignment-number">Pertemuan ${assignment.number}</div>
+                        <h2 class="assignment-title">${assignment.title}</h2>
+                        <p class="assignment-description">${assignment.description}</p>
+                        
+                        <div class="assignment-meta">
+                            <span><i class="fas fa-calendar-alt" aria-hidden="true"></i> ${this.formatDate(assignment.lastModified)}</span>
+                            <span class="assignment-status ${statusClass}">${statusText}</span>
+                        </div>
+
+                        <div class="assignment-details">
+                            <div class="tech-stack">
+                                <strong>Teknologi:</strong>
+                                <div style="margin-top: 5px;">
+                                    ${assignment.technologies.map(tech => 
+                                        `<span style="background: #edf2f7; padding: 2px 8px; border-radius: 10px; font-size: 0.8rem; margin-right: 5px; display: inline-block; margin-bottom: 3px;">${tech}</span>`
+                                    ).join('')}
+                                </div>
+                            </div>
+                            
+                            <div style="margin-top: 15px;">
+                                <strong>Fitur Utama:</strong>
+                                <ul style="margin-top: 5px; margin-left: 20px; color: #4a5568;">
+                                    ${assignment.features.map(feature => `<li>${feature}</li>`).join('')}
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="assignment-actions">
+                            <a href="${this.baseUrl}/${assignment.folder}/" class="btn btn-primary" target="_blank">
+                                <i class="fas fa-external-link-alt" aria-hidden="true"></i>
+                                <span>Lihat Demo</span>
+                            </a>
+                            <button onclick="window.portfolio.viewSource('${assignment.folder}')" class="btn btn-secondary">
+                                <i class="fas fa-code" aria-hidden="true"></i>
+                                <span>Lihat Kode</span>
+                            </button>
+                        </div>
+                    </article>
+                `;
+            }
+
+            formatDate(dateString) {
+                const date = new Date(dateString);
+                return date.toLocaleDateString('id-ID', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+            }
+
+            viewSource(folder) {
+                const urls = [
+                    `${this.baseUrl}/${folder}/index.html`,
+                    `${this.baseUrl}/${folder}/style.css`,
+                    `${this.baseUrl}/${folder}/script.js`
+                ];
+                
+                urls.forEach(url => {
+                    window.open(url, '_blank');
+                });
+            }
+
+            showError() {
+                const container = document.getElementById('assignmentsContainer');
+                container.innerHTML = `
+                    <div class="no-assignments">
+                        <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
+                        <h3>Error Memuat Tugas</h3>
+                        <p>Terjadi kesalahan saat memuat daftar tugas. Silakan refresh halaman.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Initialize portfolio
+        document.addEventListener('DOMContentLoaded', () => {
+            window.portfolio = new AssignmentPortfolio();
+        });
+
+        // Auto-detect new assignments
+        window.addEventListener('focus', () => {
+            location.reload();
+        });
+    </script>
+</body>
+</html>
