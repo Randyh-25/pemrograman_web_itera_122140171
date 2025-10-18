@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manajemen Tugas Mahasiswa - Randy Hendriyawan</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="app-header">
+            <h1><i class="fas fa-graduation-cap" aria-hidden="true"></i> Manajemen Tugas Mahasiswa</h1>
+            <p>Kelola aktivitas akademik Anda dengan mudah</p>
+        </header>
+
+        <main class="main-content">
+            <section class="task-form-section" aria-labelledby="form-heading">
+                <h2 id="form-heading"><i class="fas fa-plus-circle" aria-hidden="true"></i> Tambah Tugas Baru</h2>
+                <form id="taskForm" class="task-form" novalidate>
+                    <fieldset>
+                        <legend class="sr-only">Informasi Tugas</legend>
+                        
+                        <div class="form-group">
+                            <label for="taskName">
+                                <i class="fas fa-tasks" aria-hidden="true"></i> Nama Tugas
+                            </label>
+                            <input type="text" id="taskName" name="taskName" placeholder="Masukkan nama tugas" required aria-describedby="taskNameError">
+                            <span class="error-message" id="taskNameError" role="alert" aria-live="polite"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="subject">
+                                <i class="fas fa-book" aria-hidden="true"></i> Mata Kuliah
+                            </label>
+                            <input type="text" id="subject" name="subject" placeholder="Masukkan mata kuliah" required aria-describedby="subjectError">
+                            <span class="error-message" id="subjectError" role="alert" aria-live="polite"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="deadline">
+                                <i class="fas fa-calendar-alt" aria-hidden="true"></i> Deadline
+                            </label>
+                            <input type="datetime-local" id="deadline" name="deadline" required aria-describedby="deadlineError">
+                            <span class="error-message" id="deadlineError" role="alert" aria-live="polite"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="priority">
+                                <i class="fas fa-exclamation-triangle" aria-hidden="true"></i> Prioritas
+                            </label>
+                            <select id="priority" name="priority" required aria-describedby="priorityError">
+                                <option value="">Pilih Prioritas</option>
+                                <option value="tinggi">Tinggi</option>
+                                <option value="sedang">Sedang</option>
+                                <option value="rendah">Rendah</option>
+                            </select>
+                            <span class="error-message" id="priorityError" role="alert" aria-live="polite"></span>
+                        </div>
+                    </fieldset>
+
+                    <div class="form-actions">
+                        <button type="submit" id="submitBtn" class="btn-primary">
+                            <i class="fas fa-save" aria-hidden="true"></i> 
+                            <span>Tambah Tugas</span>
+                        </button>
+                        <button type="button" id="cancelBtn" class="btn-secondary" style="display: none;">
+                            <i class="fas fa-times" aria-hidden="true"></i>
+                            <span>Batal</span>
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <section class="filter-section" aria-labelledby="filter-heading">
+                <h2 id="filter-heading"><i class="fas fa-filter" aria-hidden="true"></i> Filter & Pencarian</h2>
+                <div class="filter-controls">
+                    <div class="search-group">
+                        <label for="searchTask" class="sr-only">Cari tugas</label>
+                        <input type="search" id="searchTask" placeholder="Cari tugas..." aria-label="Cari tugas">
+                        <i class="fas fa-search" aria-hidden="true"></i>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="filterStatus" class="sr-only">Filter berdasarkan status</label>
+                        <select id="filterStatus" aria-label="Filter berdasarkan status">
+                            <option value="">Semua Status</option>
+                            <option value="pending">Belum Selesai</option>
+                            <option value="completed">Selesai</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="filterSubject" class="sr-only">Filter berdasarkan mata kuliah</label>
+                        <select id="filterSubject" aria-label="Filter berdasarkan mata kuliah">
+                            <option value="">Semua Mata Kuliah</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="filterPriority" class="sr-only">Filter berdasarkan prioritas</label>
+                        <select id="filterPriority" aria-label="Filter berdasarkan prioritas">
+                            <option value="">Semua Prioritas</option>
+                            <option value="tinggi">Tinggi</option>
+                            <option value="sedang">Sedang</option>
+                            <option value="rendah">Rendah</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            <section class="stats-section" aria-labelledby="stats-heading">
+                <h2 id="stats-heading" class="sr-only">Statistik Tugas</h2>
+                <div class="stats-grid" role="region" aria-label="Ringkasan statistik tugas">
+                    <div class="stat-card">
+                        <i class="fas fa-clipboard-list" aria-hidden="true"></i>
+                        <div>
+                            <h3 id="totalTasks">0</h3>
+                            <p>Total Tugas</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-hourglass-half" aria-hidden="true"></i>
+                        <div>
+                            <h3 id="pendingTasks">0</h3>
+                            <p>Belum Selesai</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-check-circle" aria-hidden="true"></i>
+                        <div>
+                            <h3 id="completedTasks">0</h3>
+                            <p>Selesai</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
+                        <div>
+                            <h3 id="urgentTasks">0</h3>
+                            <p>Mendesak</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="tasks-section" aria-labelledby="tasks-heading">
+                <h2 id="tasks-heading"><i class="fas fa-list" aria-hidden="true"></i> Daftar Tugas</h2>
+                <div id="tasksContainer" class="tasks-container" role="region" aria-live="polite" aria-label="Daftar tugas">
+                    <div class="no-tasks">
+                        <i class="fas fa-clipboard" aria-hidden="true"></i>
+                        <p>Belum ada tugas. Tambahkan tugas pertama Anda!</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="confirmModal" class="modal" role="dialog" aria-labelledby="modal-title" aria-describedby="modal-description" aria-hidden="true">
+        <div class="modal-content">
+            <h3 id="modal-title"><i class="fas fa-exclamation-triangle" aria-hidden="true"></i> Konfirmasi</h3>
+            <p id="confirmMessage">Apakah Anda yakin ingin menghapus tugas ini?</p>
+            <div class="modal-actions">
+                <button id="confirmYes" class="btn-danger">Ya, Hapus</button>
+                <button id="confirmNo" class="btn-secondary">Batal</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
