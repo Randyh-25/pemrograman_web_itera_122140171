@@ -61,32 +61,7 @@ class TaskManager {
             }
         });
 
-        document.addEventListener('click', (e) => {
-            const button = e.target.closest('button[data-action]');
-            if (!button) return;
 
-            e.preventDefault();
-            e.stopPropagation();
-
-            const action = button.getAttribute('data-action');
-            const taskId = button.getAttribute('data-task-id');
-
-            console.log('Button clicked:', action, 'ID:', taskId);
-
-            switch (action) {
-                case 'toggle':
-                    this.toggleTaskStatus(taskId);
-                    break;
-                case 'edit':
-                    if (!button.disabled) {
-                        this.editTask(taskId);
-                    }
-                    break;
-                case 'delete':
-                    this.showDeleteConfirm(taskId);
-                    break;
-            }
-        });
     }
     validateForm() {
         const taskName = document.getElementById('taskName').value.trim();
@@ -226,39 +201,39 @@ class TaskManager {
     }
 
     toggleTaskStatus(id) {
-        console.log('toggleTaskStatus called with ID:', id);
-        const task = this.tasks.find(task => task.id === id);
-        console.log('Task found:', task);
-        if (task) {
-            task.status = task.status === 'pending' ? 'completed' : 'pending';
-            task.completedAt = task.status === 'completed' ? new Date().toISOString() : null;
-            this.updateDisplay();
-            this.saveTasks();
-            const message = task.status === 'completed' ? 'Tugas ditandai selesai!' : 'Tugas ditandai belum selesai!';
-            this.showNotification(message, 'success');
-        } else {
-            console.log('Task not found with ID:', id);
+        try {
+            const task = this.tasks.find(task => task.id === id);
+            if (task) {
+                task.status = task.status === 'pending' ? 'completed' : 'pending';
+                task.completedAt = task.status === 'completed' ? new Date().toISOString() : null;
+                this.updateDisplay();
+                this.saveTasks();
+                const message = task.status === 'completed' ? 'Tugas ditandai selesai!' : 'Tugas ditandai belum selesai!';
+                this.showNotification(message, 'success');
+            }
+        } catch (error) {
+            this.showNotification('Terjadi kesalahan saat mengubah status tugas', 'error');
         }
     }
 
     editTask(id) {
-        console.log('editTask called with ID:', id);
-        const task = this.tasks.find(task => task.id === id);
-        console.log('Task found for edit:', task);
-        if (task) {
-            this.editingTaskId = id;
-            
-            // Fill form with task data
-            document.getElementById('taskName').value = task.name;
-            document.getElementById('subject').value = task.subject;
-            document.getElementById('deadline').value = task.deadline;
-            document.getElementById('priority').value = task.priority;
-            
-            // Update form UI
-            document.getElementById('submitBtn').innerHTML = '<i class="fas fa-save" aria-hidden="true"></i> <span>Update Tugas</span>';
-            document.getElementById('cancelBtn').style.display = 'inline-flex';
-            
-            document.querySelector('.task-form-section').scrollIntoView({ behavior: 'smooth' });
+        try {
+            const task = this.tasks.find(task => task.id === id);
+            if (task) {
+                this.editingTaskId = id;
+                
+                document.getElementById('taskName').value = task.name;
+                document.getElementById('subject').value = task.subject;
+                document.getElementById('deadline').value = task.deadline;
+                document.getElementById('priority').value = task.priority;
+                
+                document.getElementById('submitBtn').innerHTML = '<i class="fas fa-save" aria-hidden="true"></i> <span>Update Tugas</span>';
+                document.getElementById('cancelBtn').style.display = 'inline-flex';
+                
+                document.querySelector('.task-form-section').scrollIntoView({ behavior: 'smooth' });
+            }
+        } catch (error) {
+            this.showNotification('Terjadi kesalahan saat mengedit tugas', 'error');
         }
     }
     saveTasks() {
@@ -275,13 +250,8 @@ class TaskManager {
             const savedTasks = localStorage.getItem('tasks');
             if (savedTasks) {
                 this.tasks = JSON.parse(savedTasks);
-                console.log('Loaded tasks:', this.tasks);
-                this.tasks.forEach(task => {
-                    console.log('Task ID type:', typeof task.id, 'Value:', task.id);
-                });
             }
         } catch (error) {
-            console.error('Error loading tasks:', error);
             this.tasks = [];
             this.showNotification('Gagal memuat data!', 'error');
         }
@@ -348,14 +318,14 @@ class TaskManager {
                     </div>
                 </div>
                 <div class="task-actions">
-                    <button class="btn-complete" data-action="toggle" data-task-id="${task.id}">
-                        <i class="${completeButtonIcon}"></i> ${completeButtonText}
+                    <button class="btn-complete" onclick="window.taskManager.toggleTaskStatus('${task.id}')">
+                        <i class="${completeButtonIcon}" aria-hidden="true"></i> ${completeButtonText}
                     </button>
-                    <button class="btn-edit" data-action="edit" data-task-id="${task.id}" ${task.status === 'completed' ? 'disabled' : ''}>
-                        <i class="fas fa-edit"></i> Edit
+                    <button class="btn-edit" onclick="window.taskManager.editTask('${task.id}')" ${task.status === 'completed' ? 'disabled' : ''}>
+                        <i class="fas fa-edit" aria-hidden="true"></i> Edit
                     </button>
-                    <button class="btn-delete" data-action="delete" data-task-id="${task.id}">
-                        <i class="fas fa-trash"></i> Hapus
+                    <button class="btn-delete" onclick="window.taskManager.showDeleteConfirm('${task.id}')">
+                        <i class="fas fa-trash" aria-hidden="true"></i> Hapus
                     </button>
                 </div>
             </div>
@@ -425,14 +395,16 @@ class TaskManager {
         document.getElementById('urgentTasks').textContent = urgentTasks;
     }
     showDeleteConfirm(id) {
-        console.log('showDeleteConfirm called with ID:', id);
-        this.taskToDelete = id;
-        const task = this.tasks.find(t => t.id === id);
-        console.log('Task found for delete:', task);
-        if (task) {
-            document.getElementById('confirmMessage').textContent = 
-                `Apakah Anda yakin ingin menghapus tugas "${task.name}"?`;
-            document.getElementById('confirmModal').classList.add('show');
+        try {
+            this.taskToDelete = id;
+            const task = this.tasks.find(t => t.id === id);
+            if (task) {
+                document.getElementById('confirmMessage').textContent = 
+                    `Apakah Anda yakin ingin menghapus tugas "${task.name}"?`;
+                document.getElementById('confirmModal').classList.add('show');
+            }
+        } catch (error) {
+            this.showNotification('Terjadi kesalahan saat menghapus tugas', 'error');
         }
     }
 
@@ -448,7 +420,7 @@ class TaskManager {
         document.getElementById('confirmModal').classList.remove('show');
     }
     generateId() {
-        return Date.now().toString() + Math.floor(Math.random() * 1000).toString();
+        return 'task_' + Date.now().toString() + '_' + Math.floor(Math.random() * 1000).toString();
     }
 
     escapeHtml(unsafe) {
@@ -526,8 +498,12 @@ class TaskManager {
     }
 }
 
-let taskManager;
-
 document.addEventListener('DOMContentLoaded', () => {
-    taskManager = new TaskManager();
+    window.taskManager = new TaskManager();
+});
+
+window.addEventListener('load', () => {
+    if (!window.taskManager) {
+        window.taskManager = new TaskManager();
+    }
 });
