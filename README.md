@@ -22,6 +22,7 @@ pemrograman_web_itera_122140171/
 
 ### Pertemuan 1 - Aplikasi Manajemen Tugas Mahasiswa
 - **Folder:** `RandyHendriyawan_122140171_pertemuan1/`
+- **Demo:** [https://randyh-25.github.io/pemrograman_web_itera_122140171/RandyHendriyawan_122140171_pertemuan1/](https://randyh-25.github.io/pemrograman_web_itera_122140171/RandyHendriyawan_122140171_pertemuan1/)
 - **Teknologi:** HTML5, CSS3, Vanilla JavaScript, LocalStorage
 - **Fitur:**
   - CRUD Operations (Create, Read, Update, Delete)
@@ -31,6 +32,29 @@ pemrograman_web_itera_122140171/
   - Responsive Design
   - Statistik dashboard
   - Notifikasi user-friendly
+
+### Pertemuan 2 - Aplikasi Manajemen Profil Mahasiswa
+- **Folder:** `RandyHendriyawan_122140171_pertemuan2/`
+- **Demo:** [https://randyh-25.github.io/pemrograman_web_itera_122140171/RandyHendriyawan_122140171_pertemuan2/](https://randyh-25.github.io/pemrograman_web_itera_122140171/RandyHendriyawan_122140171_pertemuan2/)
+- **Teknologi:** HTML5, CSS3, ES6+ JavaScript, LocalStorage
+- **Fitur ES6+:**
+  - **Classes** - StudentProfile & StudentManagementApp
+  - **Template Literals** - Dynamic HTML rendering
+  - **Arrow Functions** - Event handlers & utilities (3+ implementasi)
+  - **Let/Const** - Proper variable declarations
+  - **Async/Await** - LocalStorage operations
+  - **Destructuring** - Object & form data extraction
+  - **Spread Operator** - Array operations
+  - **Array Methods** - map, filter, reduce
+- **Fitur Aplikasi:**
+  - CRUD Operations untuk profil mahasiswa
+  - Form Validation dengan error handling
+  - Search & Filter berdasarkan program studi/semester
+  - Export data ke CSV
+  - Statistics dashboard real-time
+  - LocalStorage untuk penyimpanan data
+  - Responsive Design dengan best practices
+  - Semantic HTML & accessibility features
 
 
 ---
