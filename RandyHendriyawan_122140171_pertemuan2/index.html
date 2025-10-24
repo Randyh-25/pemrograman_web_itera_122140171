@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manajemen Profil Mahasiswa - Randy Hendriyawan</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="app-header">
+            <h1><i class="fas fa-user-graduate" aria-hidden="true"></i> Manajemen Profil Mahasiswa</h1>
+            <p>Kelola data mahasiswa dengan teknologi ES6+</p>
+        </header>
+
+        <main class="main-content">
+            <section class="profile-form-section" aria-labelledby="form-heading">
+                <h2 id="form-heading"><i class="fas fa-plus-circle" aria-hidden="true"></i> Tambah Profil Mahasiswa</h2>
+                <form id="profileForm" class="profile-form" novalidate>
+                    <fieldset>
+                        <legend class="sr-only">Informasi Mahasiswa</legend>
+                        
+                        <div class="form-group">
+                            <label for="studentName">
+                                <i class="fas fa-user" aria-hidden="true"></i> Nama Mahasiswa
+                            </label>
+                            <input type="text" id="studentName" name="studentName" placeholder="Masukkan nama lengkap" required aria-describedby="studentNameError">
+                            <span class="error-message" id="studentNameError" role="alert" aria-live="polite"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="studentId">
+                                <i class="fas fa-id-card" aria-hidden="true"></i> NIM
+                            </label>
+                            <input type="text" id="studentId" name="studentId" placeholder="Masukkan NIM" required aria-describedby="studentIdError">
+                            <span class="error-message" id="studentIdError" role="alert" aria-live="polite"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">
+                                <i class="fas fa-envelope" aria-hidden="true"></i> Email
+                            </label>
+                            <input type="email" id="email" name="email" placeholder="Masukkan email" required aria-describedby="emailError">
+                            <span class="error-message" id="emailError" role="alert" aria-live="polite"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="program">
+                                <i class="fas fa-graduation-cap" aria-hidden="true"></i> Program Studi
+                            </label>
+                            <select id="program" name="program" required aria-describedby="programError">
+                                <option value="">Pilih Program Studi</option>
+                                <option value="Teknik Informatika">Teknik Informatika</option>
+                                <option value="Sistem Informasi">Sistem Informasi</option>
+                                <option value="Teknik Elektro">Teknik Elektro</option>
+                                <option value="Teknik Sipil">Teknik Sipil</option>
+                                <option value="Teknik Mesin">Teknik Mesin</option>
+                            </select>
+                            <span class="error-message" id="programError" role="alert" aria-live="polite"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="semester">
+                                <i class="fas fa-calendar-alt" aria-hidden="true"></i> Semester
+                            </label>
+                            <select id="semester" name="semester" required aria-describedby="semesterError">
+                                <option value="">Pilih Semester</option>
+                                <option value="1">Semester 1</option>
+                                <option value="2">Semester 2</option>
+                                <option value="3">Semester 3</option>
+                                <option value="4">Semester 4</option>
+                                <option value="5">Semester 5</option>
+                                <option value="6">Semester 6</option>
+                                <option value="7">Semester 7</option>
+                                <option value="8">Semester 8</option>
+                            </select>
+                            <span class="error-message" id="semesterError" role="alert" aria-live="polite"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="gpa">
+                                <i class="fas fa-star" aria-hidden="true"></i> IPK
+                            </label>
+                            <input type="number" id="gpa" name="gpa" placeholder="0.00" min="0" max="4" step="0.01" required aria-describedby="gpaError">
+                            <span class="error-message" id="gpaError" role="alert" aria-live="polite"></span>
+                        </div>
+                    </fieldset>
+
+                    <div class="form-actions">
+                        <button type="submit" id="submitBtn" class="btn-primary">
+                            <i class="fas fa-save" aria-hidden="true"></i> 
+                            <span>Tambah Profil</span>
+                        </button>
+                        <button type="button" id="cancelBtn" class="btn-secondary" style="display: none;">
+                            <i class="fas fa-times" aria-hidden="true"></i>
+                            <span>Batal</span>
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <section class="filter-section" aria-labelledby="filter-heading">
+                <h2 id="filter-heading"><i class="fas fa-filter" aria-hidden="true"></i> Filter & Pencarian</h2>
+                <div class="filter-controls">
+                    <div class="search-group">
+                        <label for="searchStudent" class="sr-only">Cari mahasiswa</label>
+                        <input type="search" id="searchStudent" placeholder="Cari mahasiswa..." aria-label="Cari mahasiswa">
+                        <i class="fas fa-search" aria-hidden="true"></i>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="filterProgram" class="sr-only">Filter berdasarkan program studi</label>
+                        <select id="filterProgram" aria-label="Filter berdasarkan program studi">
+                            <option value="">Semua Program Studi</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="filterSemester" class="sr-only">Filter berdasarkan semester</label>
+                        <select id="filterSemester" aria-label="Filter berdasarkan semester">
+                            <option value="">Semua Semester</option>
+                            <option value="1">Semester 1</option>
+                            <option value="2">Semester 2</option>
+                            <option value="3">Semester 3</option>
+                            <option value="4">Semester 4</option>
+                            <option value="5">Semester 5</option>
+                            <option value="6">Semester 6</option>
+                            <option value="7">Semester 7</option>
+                            <option value="8">Semester 8</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <button id="exportBtn" class="btn-secondary">
+                            <i class="fas fa-download" aria-hidden="true"></i>
+                            <span>Export Data</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="stats-section" aria-labelledby="stats-heading">
+                <h2 id="stats-heading" class="sr-only">Statistik Mahasiswa</h2>
+                <div class="stats-grid" role="region" aria-label="Ringkasan statistik mahasiswa">
+                    <div class="stat-card">
+                        <i class="fas fa-users" aria-hidden="true"></i>
+                        <div>
+                            <h3 id="totalStudents">0</h3>
+                            <p>Total Mahasiswa</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-graduation-cap" aria-hidden="true"></i>
+                        <div>
+                            <h3 id="totalPrograms">0</h3>
+                            <p>Program Studi</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-star" aria-hidden="true"></i>
+                        <div>
+                            <h3 id="averageGPA">0.00</h3>
+                            <p>Rata-rata IPK</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-trophy" aria-hidden="true"></i>
+                        <div>
+                            <h3 id="highAchievers">0</h3>
+                            <p>IPK ≥ 3.5</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="students-section" aria-labelledby="students-heading">
+                <h2 id="students-heading"><i class="fas fa-list" aria-hidden="true"></i> Daftar Mahasiswa</h2>
+                <div id="studentsContainer" class="students-container" role="region" aria-live="polite" aria-label="Daftar mahasiswa">
+                    <div class="no-students">
+                        <i class="fas fa-user-plus" aria-hidden="true"></i>
+                        <p>Belum ada mahasiswa. Tambahkan profil mahasiswa pertama Anda!</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="confirmModal" class="modal" role="dialog" aria-labelledby="modal-title" aria-describedby="modal-description" aria-hidden="true">
+        <div class="modal-content">
+            <h3 id="modal-title"><i class="fas fa-exclamation-triangle" aria-hidden="true"></i> Konfirmasi</h3>
+            <p id="confirmMessage">Apakah Anda yakin ingin menghapus profil mahasiswa ini?</p>
+            <div class="modal-actions">
+                <button id="confirmYes" class="btn-danger">Ya, Hapus</button>
+                <button id="confirmNo" class="btn-secondary">Batal</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
