@@ -102,6 +102,8 @@ class StudentManagementApp {
         const filterProgram = document.getElementById('filterProgram');
         const filterSemester = document.getElementById('filterSemester');
         const exportBtn = document.getElementById('exportBtn');
+        const importBtn = document.getElementById('importBtn');
+        const csvFileInput = document.getElementById('csvFileInput');
         const cancelBtn = document.getElementById('cancelBtn');
 
         form.addEventListener('submit', (e) => {
@@ -128,6 +130,14 @@ class StudentManagementApp {
             this.handleExport();
         });
 
+        importBtn.addEventListener('click', () => {
+            csvFileInput.click();
+        });
+
+        csvFileInput.addEventListener('change', (e) => {
+            this.handleFileSelect(e);
+        });
+
         cancelBtn.addEventListener('click', () => {
             this.cancelEdit();
         });
@@ -140,9 +150,23 @@ class StudentManagementApp {
             this.hideModal();
         });
 
+        document.getElementById('importConfirm').addEventListener('click', () => {
+            this.confirmImport();
+        });
+
+        document.getElementById('importCancel').addEventListener('click', () => {
+            this.hideImportModal();
+        });
+
         document.getElementById('confirmModal').addEventListener('click', (e) => {
             if (e.target.id === 'confirmModal') {
                 this.hideModal();
+            }
+        });
+
+        document.getElementById('importModal').addEventListener('click', (e) => {
+            if (e.target.id === 'importModal') {
+                this.hideImportModal();
             }
         });
     }
@@ -467,6 +491,249 @@ class StudentManagementApp {
     hideModal() {
         document.getElementById('confirmModal').classList.remove('show');
         document.getElementById('confirmModal').setAttribute('aria-hidden', 'true');
+    }
+
+    handleFileSelect(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        if (!file.name.toLowerCase().endsWith('.csv')) {
+            this.showNotification('Hanya file CSV yang diperbolehkan!', 'error');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const csvData = e.target.result;
+                this.parseCSV(csvData);
+            } catch (error) {
+                this.showNotification('Gagal membaca file CSV', 'error');
+            }
+        };
+        reader.readAsText(file);
+    }
+
+    parseCSV(csvData) {
+        try {
+            const lines = csvData.trim().split('\n');
+            if (lines.length < 2) {
+                this.showNotification('File CSV tidak memiliki data yang valid', 'error');
+                return;
+            }
+
+            const headers = lines[0].split(',').map(h => h.trim());
+            const expectedHeaders = ['Nama', 'NIM', 'Email', 'Program Studi', 'Semester', 'IPK'];
+            
+            if (!this.validateHeaders(headers, expectedHeaders)) {
+                this.showNotification('Format header CSV tidak sesuai. Header yang diharapkan: ' + expectedHeaders.join(', '), 'error');
+                return;
+            }
+
+            const parsedData = [];
+            const errors = [];
+
+            for (let i = 1; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (!line) continue;
+
+                const values = line.split(',').map(v => v.trim());
+                if (values.length !== expectedHeaders.length) {
+                    errors.push(`Baris ${i + 1}: Jumlah kolom tidak sesuai`);
+                    continue;
+                }
+
+                const student = {
+                    studentName: values[0],
+                    studentId: values[1],
+                    email: values[2],
+                    program: values[3],
+                    semester: values[4],
+                    gpa: values[5]
+                };
+
+                const validation = this.validateImportData(student, i + 1);
+                if (validation.isValid) {
+                    parsedData.push(student);
+                } else {
+                    errors.push(...validation.errors);
+                }
+            }
+
+            this.showImportPreview(parsedData, errors);
+        } catch (error) {
+            this.showNotification('Gagal memproses file CSV', 'error');
+        }
+    }
+
+    validateHeaders(headers, expected) {
+        if (headers.length !== expected.length) return false;
+        return headers.every((header, index) => 
+            header.toLowerCase() === expected[index].toLowerCase()
+        );
+    }
+
+    validateImportData(student, rowNumber) {
+        const errors = [];
+        
+        if (!student.studentName || student.studentName.length < 2) {
+            errors.push(`Baris ${rowNumber}: Nama minimal 2 karakter`);
+        }
+
+        if (!student.studentId || student.studentId.length < 5) {
+            errors.push(`Baris ${rowNumber}: NIM minimal 5 karakter`);
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!student.email || !emailRegex.test(student.email)) {
+            errors.push(`Baris ${rowNumber}: Format email tidak valid`);
+        }
+
+        if (!student.program) {
+            errors.push(`Baris ${rowNumber}: Program studi harus diisi`);
+        }
+
+        const semester = parseInt(student.semester);
+        if (!semester || semester < 1 || semester > 8) {
+            errors.push(`Baris ${rowNumber}: Semester harus antara 1-8`);
+        }
+
+        const gpa = parseFloat(student.gpa);
+        if (isNaN(gpa) || gpa < 0 || gpa > 4) {
+            errors.push(`Baris ${rowNumber}: IPK harus antara 0.00-4.00`);
+        }
+
+        if (this.students.some(s => s.studentId === student.studentId)) {
+            errors.push(`Baris ${rowNumber}: NIM ${student.studentId} sudah ada`);
+        }
+
+        return {
+            isValid: errors.length === 0,
+            errors: errors
+        };
+    }
+
+    showImportPreview(validData, errors) {
+        this.pendingImportData = validData;
+        
+        const modal = document.getElementById('importModal');
+        const previewDiv = document.getElementById('importPreview');
+        const previewTable = document.getElementById('previewTable');
+        const confirmBtn = document.getElementById('importConfirm');
+        const modalContent = document.getElementById('importModalContent');
+
+        if (errors.length > 0) {
+            modalContent.innerHTML = `
+                <div class="import-error">
+                    <h4>Ditemukan Error dalam File CSV:</h4>
+                    <ul>
+                        ${errors.map(error => `<li>${error}</li>`).join('')}
+                    </ul>
+                    <p>Silakan perbaiki file CSV dan coba lagi.</p>
+                </div>
+            `;
+            confirmBtn.style.display = 'none';
+        } else if (validData.length === 0) {
+            modalContent.innerHTML = `
+                <div class="import-error">
+                    <h4>Tidak ada data valid untuk diimpor</h4>
+                    <p>Pastikan file CSV memiliki data yang benar dan tidak duplikasi.</p>
+                </div>
+            `;
+            confirmBtn.style.display = 'none';
+        } else {
+            previewTable.innerHTML = `
+                <table class="preview-table">
+                    <thead>
+                        <tr>
+                            <th>Nama</th>
+                            <th>NIM</th>
+                            <th>Email</th>
+                            <th>Program Studi</th>
+                            <th>Semester</th>
+                            <th>IPK</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${validData.slice(0, 5).map(student => `
+                            <tr>
+                                <td>${this.escapeHtml(student.studentName)}</td>
+                                <td>${this.escapeHtml(student.studentId)}</td>
+                                <td>${this.escapeHtml(student.email)}</td>
+                                <td>${this.escapeHtml(student.program)}</td>
+                                <td>${student.semester}</td>
+                                <td>${student.gpa}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+                ${validData.length > 5 ? `<p style="text-align: center; margin-top: 10px; color: #718096;">... dan ${validData.length - 5} data lainnya</p>` : ''}
+            `;
+            
+            modalContent.innerHTML = `
+                <div class="import-stats">
+                    <h4>Siap untuk diimpor: ${validData.length} mahasiswa</h4>
+                    <p>Preview data yang akan diimpor:</p>
+                </div>
+            `;
+            modalContent.appendChild(previewDiv);
+            
+            previewDiv.style.display = 'block';
+            confirmBtn.style.display = 'inline-flex';
+        }
+
+        modal.classList.add('show');
+        modal.setAttribute('aria-hidden', 'false');
+    }
+
+    confirmImport() {
+        try {
+            if (!this.pendingImportData || this.pendingImportData.length === 0) {
+                this.showNotification('Tidak ada data untuk diimpor', 'error');
+                return;
+            }
+
+            let successCount = 0;
+            for (const studentData of this.pendingImportData) {
+                try {
+                    this.addStudent(studentData);
+                    successCount++;
+                } catch (error) {
+                    console.error('Error adding student:', error);
+                }
+            }
+
+            this.saveStudents();
+            this.updateDisplay();
+            this.populateFilterOptions();
+            this.hideImportModal();
+
+            this.showNotification(`Berhasil mengimpor ${successCount} data mahasiswa!`, 'success');
+        } catch (error) {
+            this.showNotification('Gagal mengimpor data', 'error');
+        }
+    }
+
+    hideImportModal() {
+        const modal = document.getElementById('importModal');
+        modal.classList.remove('show');
+        modal.setAttribute('aria-hidden', 'true');
+        
+        this.pendingImportData = null;
+        document.getElementById('csvFileInput').value = '';
+        document.getElementById('importPreview').style.display = 'none';
+        document.getElementById('importConfirm').style.display = 'none';
+        
+        const modalContent = document.getElementById('importModalContent');
+        modalContent.innerHTML = `
+            <p>Pilih file CSV yang berisi data mahasiswa untuk diimpor.</p>
+            <div class="csv-format-info">
+                <h4>Format CSV yang didukung:</h4>
+                <p><strong>Header:</strong> Nama,NIM,Email,Program Studi,Semester,IPK</p>
+                <p><strong>Contoh:</strong></p>
+                <code>John Doe,123456789,john@email.com,Teknik Informatika,5,3.75</code>
+            </div>
+        `;
     }
 
     handleExport() {
