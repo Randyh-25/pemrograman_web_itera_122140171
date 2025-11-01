@@ -1,0 +1,12 @@
+.env
+node_modules/
+RandyHendriyawan_1220210023_pertemuan3/node_modules/
+.DS_Store
+dist/
+.vscode/
+build/
+*.log
+coverage/
+.idea/
+RandyHendriyawan_1220210023_pertemuan3/dist/
+RandyHendriyawan_1220210023_pertemuan3/.vscode/

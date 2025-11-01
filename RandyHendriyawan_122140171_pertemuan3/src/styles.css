@@ -1,0 +1,23 @@
+:root{--primary:#667eea;--primaryDark:#4c51bf;--accent:#764ba2;--text:#2d3748;--muted:#718096;--bg:#f7fafc;}
+*{box-sizing:border-box}body{margin:0;font-family:Segoe UI,Tahoma,Geneva,Verdana,sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;color:#333}
+.container{max-width:1000px;margin:0 auto;padding:24px}
+.card{background:#fff;border-radius:12px;padding:20px;box-shadow:0 8px 24px rgba(0,0,0,.08)}
+.header{display:flex;justify-content:space-between;align-items:center;color:#fff;margin-bottom:20px}
+.nav{display:flex;gap:12px}
+.nav a{color:#fff;text-decoration:none;padding:8px 12px;border-radius:8px}
+.nav a.active{background:rgba(255,255,255,.2)}
+.grid{display:grid;gap:16px}
+.row{display:flex;gap:12px;flex-wrap:wrap}
+input,select{padding:10px 12px;border:2px solid #e2e8f0;border-radius:8px;font-size:1rem}
+button{padding:10px 16px;border:none;border-radius:8px;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;font-weight:600;cursor:pointer}
+button.secondary{background:#718096}
+button.danger{background:#e53e3e}
+.error{color:#e53e3e;font-size:.9rem}
+.list{display:grid;gap:10px}
+.item{background:var(--bg);border:1px solid #e2e8f0;border-radius:10px;padding:14px;display:flex;justify-content:space-between;align-items:start}
+.badge{padding:4px 10px;border-radius:20px;font-size:.8rem;font-weight:600}
+.badge.milik{background:#e6fffa;color:#319795}
+.badge.baca{background:#bee3f8;color:#2a4365}
+.badge.beli{background:#feebc8;color:#744210}
+.controls{display:flex;gap:10px;flex-wrap:wrap}
+@media(max-width:768px){.container{padding:16px} .row{flex-direction:column} }
