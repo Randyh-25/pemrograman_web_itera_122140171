@@ -10,3 +10,9 @@ coverage/
 .idea/
 RandyHendriyawan_1220210023_pertemuan3/dist/
 RandyHendriyawan_1220210023_pertemuan3/.vscode/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+env/
+RandyHendriyawan_1220210023_pertemuan4/__pycache__/
